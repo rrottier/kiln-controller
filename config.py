@@ -84,9 +84,9 @@ currency_type   = "R"   # Currency Symbol to show when calculating cost to run j
 
 try:
     import board
-    spi_sclk  = board.D17    #spi clock
-    spi_miso  = board.D27    #spi Microcomputer In Serial Out
-    spi_cs    = board.D22    #spi Chip Select
+    spi_sclk  = board.D22    #spi clock
+    spi_miso  = board.D17    #spi Microcomputer In Serial Out
+    spi_cs    = board.D27    #spi Chip Select 
     spi_mosi  = board.D10    #spi Microcomputer Out Serial In (not connected) 
     gpio_heat = board.D23    #output that controls relay
     gpio_heat_invert = False #invert the output state
@@ -140,9 +140,9 @@ sensor_time_wait = 5
 # well with the simulated oven. You must tune them to work well with 
 # your specific kiln. Note that the integral pid_ki is
 # inverted so that a smaller number means more integral action.
-pid_kp = 10   # Proportional 25,200,200
-pid_ki = 80   # Integral
-pid_kd = 220.83497910261562 # Derivative
+pid_kp = 9.33705   # Proportional 25,200,200
+pid_ki = 14.618345 # Integral
+pid_kd = 318.60864 # Derivative
 
 ########################################################################
 #
