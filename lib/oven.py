@@ -151,7 +151,11 @@ class TempSensorReal(TempSensor):
             temp = self.raw_temp() # raw_temp provided by subclasses
             if config.temp_scale.lower() == "f":
                 temp = (temp*9/5)+32
-            self.status.good()
+            if temp == 0:
+                log.error("Temperature reading is 0. Check wiring.")
+                self.status.bad()
+            else:
+                self.status.good()
             return temp
         except ThermocoupleError as tce:
             if tce.ignore:
