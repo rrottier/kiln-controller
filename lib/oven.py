@@ -450,8 +450,8 @@ class Oven(threading.Thread):
                 self.abort_run()
 
     def reset_if_schedule_ended(self):
-        if self.runtime > self.totaltime:
-            log.info("schedule ended, shutting down")
+        if (self.runtime > self.totaltime) & (self.catching_up == False):
+            log.info("temperature reached and schedule ended, shutting down")
             log.info("total cost = %s%.2f" % (config.currency_type,self.cost))
             self.abort_run()
 
@@ -746,7 +746,7 @@ class Profile():
     @staticmethod
     def find_x_given_y_on_line_from_two_points(y, point1, point2):
         if point1[0] > point2[0]: return 0  # time2 before time1 makes no sense in kiln segment
-        if point1[1] >= point2[1]: return 0 # Zero will crach. Negative temeporature slope, we don't want to seek a time.
+        if point1[1] >= point2[1]: return 0 # Zero will crash. Negative temeporature slope, we don't want to seek a time.
         x = (y - point1[1]) * (point2[0] -point1[0] ) / (point2[1] - point1[1]) + point1[0]
         return x
 

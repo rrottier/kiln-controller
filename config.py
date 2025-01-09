@@ -102,8 +102,8 @@ except (NotImplementedError,AttributeError):
 max31855 = 1
 max31856 = 0
 # uncomment these two lines if using MAX-31856
-import adafruit_max31856
-thermocouple_type = adafruit_max31856.ThermocoupleType.K
+# import adafruit_max31856
+# thermocouple_type = adafruit_max31856.ThermocoupleType.K
 
 # here are the possible max-31856 thermocouple types
 #   ThermocoupleType.B
@@ -238,7 +238,7 @@ ignore_tc_cold_junction_temp_low = False
 ignore_tc_temp_high = False
 ignore_tc_temp_low = False
 ignore_tc_voltage_error = False
-ignore_tc_short_errors = False 
+ignore_tc_short_errors = True 
 ignore_tc_unknown_error = False
 
 # This overrides all possible thermocouple errors and prevents the 
