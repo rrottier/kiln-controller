@@ -33,10 +33,12 @@ duplog = Duplogger().logref()
 
 class Output(object):
     '''This represents a GPIO output that controls a solid
-    state relay to turn the kiln elements on and off.
+    state relay to turn the kiln elements on and off. It includes
+    a optional failsafe to turn off the kiln if the relay fails.
     inputs
         config.gpio_heat
         config.gpio_heat_invert
+        config.gpio_failsafe (optional)
     '''
     def __init__(self):
         self.active = False
@@ -44,6 +46,11 @@ class Output(object):
         self.heater.direction = digitalio.Direction.OUTPUT 
         self.off = config.gpio_heat_invert
         self.on = not self.off
+        self.heater.value = self.off
+        if(hasattr(config, 'gpio_failsafe')):
+            self.failsafe = digitalio.DigitalInOut(config.gpio_failsafe) 
+            self.failsafe.direction = digitalio.Direction.OUTPUT 
+            self.failsafe.value = True
 
     def heat(self,sleepfor):
         self.heater.value = self.on
@@ -53,6 +60,12 @@ class Output(object):
         '''no active cooling, so sleep'''
         self.heater.value = self.off
         time.sleep(sleepfor)
+
+    def failsafe_on(self):
+        self.failsafe.value = True
+
+    def emergency_shutdown(self):
+        self.failsafe.value = False
 
 # wrapper for blinka board
 class Board(object):
@@ -389,6 +402,11 @@ class Oven(threading.Thread):
                     runtime += self.get_start_from_temperature(profile, temp)
 
         self.reset()
+
+        # engage the safety relay
+        if(hasattr(config, 'gpio_failsafe')):
+            self.output.failsafe_on()
+
         self.startat = startat * 60
         self.runtime = runtime
         self.start_time = datetime.datetime.now() - datetime.timedelta(seconds=self.startat)
@@ -697,6 +715,8 @@ class RealOven(Oven):
     def reset(self):
         super().reset()
         self.output.cool(0)
+        if(hasattr(config, 'gpio_failsafe')):
+            self.output.emergency_shutdown()
 
     def heat_then_cool(self):
         pid = self.pid.compute(self.target,
