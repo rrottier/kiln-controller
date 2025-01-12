@@ -402,6 +402,11 @@ class Oven(threading.Thread):
                     runtime += self.get_start_from_temperature(profile, temp)
 
         self.reset()
+
+        # engage the safety relay
+        if(hasattr(config, 'gpio_failsafe')):
+            self.output.failsafe_on()
+
         self.startat = startat * 60
         self.runtime = runtime
         self.start_time = datetime.datetime.now() - datetime.timedelta(seconds=self.startat)
@@ -703,10 +708,6 @@ class RealOven(Oven):
 
         # call parent init
         Oven.__init__(self)
-
-        # engage the safety relay
-        if(hasattr(config, 'gpio_failsafe')):
-            self.output.failsafe_on()
 
         # start thread
         self.start()
