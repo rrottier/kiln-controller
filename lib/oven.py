@@ -61,6 +61,9 @@ class Output(object):
         self.heater.value = self.off
         time.sleep(sleepfor)
 
+    def failsafe_on(self):
+        self.failsafe.value = True
+
     def emergency_shutdown(self):
         self.failsafe.value = False
 
@@ -700,6 +703,10 @@ class RealOven(Oven):
 
         # call parent init
         Oven.__init__(self)
+
+        # engage the safety relay
+        if(hasattr(config, 'gpio_failsafe')):
+            self.output.failsafe_on()
 
         # start thread
         self.start()
